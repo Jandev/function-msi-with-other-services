@@ -62,6 +62,9 @@
       "apiVersion": "2016-10-01",
       "location": "West Europe",
       "tags": {},
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites/', parameters('webSiteName'))]"
+      ],
       "properties": {
         "tenantId": "[parameters('AD.TenantId')]",
         "sku": {
@@ -72,6 +75,18 @@
           {
             "tenantId": "[parameters('AD.TenantId')]",
             "objectId": "[parameters('AD.ObjectId')]",
+            "permissions": {
+              "keys": [],
+              "secrets": [
+                "get"
+              ],
+              "certificates": [],
+              "storage": []
+            }
+          },
+          {
+            "tenantId": "[reference(concat('Microsoft.Web/sites/', parameters('webSiteName')), '2018-02-01', 'Full').identity.tenantId]",
+            "objectId": "[reference(concat('Microsoft.Web/sites/', parameters('webSiteName')), '2018-02-01', 'Full').identity.principalId]",
             "permissions": {
               "keys": [],
               "secrets": [
@@ -105,6 +120,7 @@
       "apiVersion": "2015-08-01",
       "name": "[parameters('webSiteName')]",
       "type": "Microsoft.Web/sites",
+      "kind": "functionapp",
       "location": "[resourceGroup().location]",
       "identity": {
         "type": "SystemAssigned"
